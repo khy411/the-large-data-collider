@@ -72,7 +72,6 @@ def parse_tfrecord_file(path):
 
 
 def run_spark_pipeline(mode="sample"):
-    # sample mode runs on 1 file only, switch to full for all 11m records
     spark = SparkSession.builder \
         .appName("LargeDataCollider") \
         .master("local[2]") \
