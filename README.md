@@ -7,9 +7,9 @@ by [Khy Almojuela](https://github.com/khy411)
 
 ## overview
 
-this project builds an end-to-end data engineering pipeline that ingests raw particle collision data from CERN's Higgs Boson dataset, transforms TFRecords into analytics-ready Parquet files, and generates feature distribution reports using PySpark, TensorFlow, and pandas.
+this project builds an end-to-end data engineering pipeline that ingests raw particle collision data from the Higgs Boson dataset, transforms TFRecords into analytics-ready Parquet files, and generates feature distribution reports using PySpark, TensorFlow, and pandas. 
 
-the scientific data format is undocumented, and the pipeline had to be reverse-engineered from raw protobuf bytes to extract 28 physics features per collision event.
+the binary data format was undocumented, and the pipeline had to be reverse-engineered from raw protobuf bytes to extract 28 physics features per collision event.
 
 ---
 
