@@ -2,7 +2,11 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 import struct
-import glob
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from config import TRAINING_DIR
 
 FEATURE_NAMES = [
     "lepton_pT", "lepton_eta", "lepton_phi",
@@ -42,7 +46,7 @@ def tfrecords_to_dataframe(tfrecord_paths, max_records=None):
     return pd.DataFrame(records)
 
 if __name__ == "__main__":
-    train_files = sorted(glob.glob("/mnt/c/Users/khy/Documents/Projects/higgs-boson/training/*.tfrecord"))
+    train_files = sorted(TRAINING_DIR.glob("*.tfrecord"))
     print(f"Found {len(train_files)} training files")
     print("Parsing first 50,000 records...")
     df = tfrecords_to_dataframe(train_files, max_records=50000)

@@ -1,11 +1,13 @@
 import pandas as pd
 from pathlib import Path
+import sys
 
-OUTPUT_DIR = Path(".../higgs-boson/data/processed")
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from config import TRAINING_DIR, PROCESSED_DIR
 
 def save_parquet(df: pd.DataFrame, filename: str) -> Path:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = OUTPUT_DIR / filename
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = PROCESSED_DIR / filename
     df.to_parquet(out_path, index=False, engine="pyarrow")
     size_mb = out_path.stat().st_size / (1024 * 1024)
     print(f"Saved: {out_path}")
@@ -14,14 +16,14 @@ def save_parquet(df: pd.DataFrame, filename: str) -> Path:
     return out_path
 
 def load_parquet(filename: str) -> pd.DataFrame:
-    return pd.read_parquet(OUTPUT_DIR / filename, engine="pyarrow")
+    return pd.read_parquet(PROCESSED_DIR / filename, engine="pyarrow")
 
 if __name__ == "__main__":
     from parser import tfrecords_to_dataframe
     from cleaner import validate_and_clean
-    import glob
 
-    train_files = sorted(glob.glob(".../higgs-boson/training/*.tfrecord"))
+    train_files = sorted(TRAINING_DIR.glob("*.tfrecord"))
+    print(f"Found {len(train_files)} training files")
     print("Parsing...")
     df = tfrecords_to_dataframe(train_files, max_records=50000)
     print("Cleaning...")
