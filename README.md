@@ -140,12 +140,22 @@ zoomed distributions of the four mass features, the most physically significant 
 
 ---
 
-## dataset summary (50k sample)
+## 50k sample dataset summary 
 
 | split | total records | signal | background |
 |---|---|---|---|
 | training | 50,000 | 26,552 (53.1%) | 23,448 (46.9%) |
 | validation | 62,500 | 33,184 (53.1%) | 29,316 (46.9%) |
+
+---
+
+## full pipeline dataset summary 
+
+| split | total records | signal | background |
+|---|---|---|---|
+| training | 10,500,000 | 5,563,915 (53.0%) | 4,936,085 (47.0%) |
+| validation | 500,000 | 265,208 (53.0%) | 234,792 (47.0%) |
+| **total** | **11,000,000** | **5,829,123 (53.0%)** | **5,170,877 (47.0%)** |
 
 ---
 
