@@ -1,0 +1,9 @@
+{
+  "mode": "full",
+  "auc_roc": 0.7823,
+  "accuracy": 0.7071,
+  "f1_score": 0.7064,
+  "num_trees": 100,
+  "max_depth": 10,
+  "training_records": 10500000
+}

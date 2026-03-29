@@ -186,7 +186,7 @@ if __name__ == "__main__":
     spark.sparkContext.setLogLevel("ERROR")
 
     # set sample=False to train on full 10.5M records (takes longer)
-    model, predictions, auc, accuracy, f1 = train_and_evaluate(spark, sample=False)
+    model, predictions, auc, accuracy, f1 = train_and_evaluate(spark, sample=True)
 
     print("\ngenerating plots...")
     plot_feature_importance(model, auc)
@@ -194,3 +194,18 @@ if __name__ == "__main__":
 
     spark.stop()
     print("\nclassifier complete")
+
+def save_metrics(auc, accuracy, f1, mode="sample"):
+    import json
+    from config import OUTPUT_DIR
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    metrics = {
+        "mode": mode,
+        "auc_roc": round(auc, 4),
+        "accuracy": round(accuracy, 4),
+        "f1_score": round(f1, 4)
+    }
+    out_path = OUTPUT_DIR / "model_metrics.json"
+    with open(out_path, "w") as f:
+        json.dump(metrics, f, indent=2)
+    print(f"metrics saved: {out_path}")

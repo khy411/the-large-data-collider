@@ -9,7 +9,7 @@ by [Khy Almojuela](https://github.com/khy411)
 
 this project builds an end-to-end data engineering pipeline that ingests raw particle collision data from the Higgs Boson dataset, transforms TFRecords into analytics-ready Parquet files, and generates feature distribution reports using PySpark, TensorFlow, and pandas. 
 
-the binary data format was undocumented, and the pipeline had to be reverse-engineered from raw protobuf bytes to extract 28 physics features per collision event.
+the binary data format was undocumented, and the pipeline had to be reverse-engineered from raw protobuf bytes to extract 28 physics features per collision event. a Random Forest classifier trained on the full 10.5M records via PySpark MLlib achieves an AUC-ROC of 0.7823.
 
 ---
 
@@ -31,6 +31,12 @@ Parquet storage (columnar, compressed)
          |
          v
 analytics report (feature distributions, separation scores)
+         |
+         v
+Random Forest classifier (PySpark MLlib, 100 trees)
+         |
+         v
+model evaluation + feature importance analysis
 ```
 
 ---
@@ -41,6 +47,7 @@ analytics report (feature distributions, separation scores)
 - **reverse-engineered protobuf structure**: the nested binary format was undocumented. the feature bytes were extracted by decoding raw protobuf wire format manually.
 - **physics-aware data validation**: negative pT values are not errors, they are sentinel values meaning no jet was detected. the cleaner handles this as domain knowledge, not a data quality issue.
 - **dual-mode execution**: the pipeline runs in pandas mode for sampling and PySpark mode for the full 11M records, same logic, swappable engine.
+- **end-to-end ML pipeline**: goes beyond data engineering into distributed machine learning. the same PySpark infrastructure used for ETL is reused for model training via MLlib, with feature importance cross-validated against per-feature AUC separation scores computed during analytics.
 
 ---
 
@@ -55,6 +62,7 @@ analytics report (feature distributions, separation scores)
 | Matplotlib | feature distribution plots |
 | Seaborn | correlation heatmap |
 | scikit-learn | AUC separation scoring |
+| PySpark MLlib | distributed Random Forest classification |
 
 ---
 
@@ -109,6 +117,12 @@ cd src
 python spark_pipeline.py
 ```
 
+**classification (Random Forest on full 10.5M records):**
+```bash
+cd src
+python classifier.py
+```
+
 ---
 
 ## analytics
@@ -137,6 +151,37 @@ percentage of collision events where each jet was undetected (pT sentinel = 0 af
 zoomed distributions of the four mass features, the most physically significant features for higgs detection.
 
 ![invariant mass](output/plots/invariant_mass_distributions.png)
+
+---
+
+## machine learning
+
+### random forest classifier
+trained on the full 10.5M records using PySpark MLlib. predicts Higgs signal (1) vs background (0) from 28 physics features.
+
+| metric | score |
+|---|---|
+| AUC-ROC | 0.7823 |
+| Accuracy | 70.71% |
+| F1 Score | 0.7064 |
+
+sample run (50k records):
+
+| metric | score |
+|---|---|
+| AUC-ROC | 0.7802 |
+| Accuracy | 70.50% |
+| F1 Score | 0.7044 |
+
+### feature importance
+which features the Random Forest found most discriminating, compared against the AUC separation scores from analytics.
+
+![feature importance](output/plots/feature_importance.png)
+
+### feature importance vs auc separation
+cross-validates the model's learned importance against the per-feature AUC scores computed during analytics. agreement between the two methods strengthens confidence in which features actually matter for Higgs detection.
+
+![importance vs auc](output/plots/importance_vs_auc.png)
 
 ---
 
